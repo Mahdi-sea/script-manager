@@ -1,0 +1,58 @@
+{
+  "name": "electron-run",
+  "version": "1.0.0",
+  "description": "Electron + React + Vite UI to run dev-all.js scripts",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && electron-builder",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "clean": "if exist release rmdir /s /q release",
+    "electron:build": "npm run clean && vite build && electron-builder"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "vite": "^5.0.8",
+    "vite-plugin-electron": "^0.28.2",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.electron.run",
+    "productName": "Electron Run",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "projects.json",
+      "dev-all.js",
+      "run-dev.bat"
+    ],
+    "asarUnpack": [
+      "dev-all.js",
+      "run-dev.bat"
+    ],
+    "win": {
+      "target": "dir"
+    }
+  }
+}

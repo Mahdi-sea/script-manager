@@ -1,0 +1,118 @@
+[
+  {
+    "name": "sea-platform-helpers",
+    "cwd": "../sea-platform-helpers",
+    "script": "watch",
+    "enabled": true,
+    "group": "Helpers"
+  },
+  {
+    "name": "sea-backend-helpers",
+    "cwd": "../sea-backend-helpers",
+    "script": "watch",
+    "enabled": true,
+    "group": "Helpers"
+  },
+  {
+    "name": "sea-react-components",
+    "cwd": "../sea-react-components",
+    "script": "watch",
+    "enabled": true,
+    "group": "Helpers"
+  },
+  {
+    "name": "sea-backend-helpers-link",
+    "cwd": "../sea-backend-helpers",
+    "script": "link:dev",
+    "enabled": true,
+    "group": "Helpers"
+  },
+  {
+    "name": "sea-platform-microservice",
+    "cwd": "../sea-platform-microservice",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:4003/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-file-manager-microservice",
+    "cwd": "../sea-file-manager-microservice",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:4002/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-common-microservice",
+    "cwd": "../sea-common-microservice",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:4000/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-email-template-microservice",
+    "cwd": "../sea-email-template-microservice",
+    "script": "start:dev",
+    "enabled": false,
+    "link": "http://localhost:4020/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-strategy-microservice",
+    "cwd": "../sea-strategy-microservice",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:4004/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-sis-microservice",
+    "cwd": "../sea-sis-microservice",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:4008/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-student-attendance-microservice",
+    "cwd": "../sea-student-attendance-microservice",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:4009/api/docs",
+    "group": "Microservices"
+  },
+  {
+    "name": "sea-admin-ui",
+    "cwd": "../sea-admin-ui",
+    "script": "dev",
+    "enabled": true,
+    "link": "http://localhost:3002/dashboard/",
+    "group": "UI"
+  },
+  {
+    "name": "sea-auth-ui",
+    "cwd": "../sea-auth-ui",
+    "script": "dev",
+    "enabled": true,
+    "link": "http://localhost:3001/",
+    "group": "UI"
+  },
+  {
+    "name": "sea-strategy-ui",
+    "cwd": "../sea-strategy-ui",
+    "script": "dev",
+    "enabled": false,
+    "link": "http://localhost:3004/dashboard/",
+    "group": "UI"
+  },
+  {
+    "name": "sea-student-attendance-ui",
+    "cwd": "../sea-student-attendance-ui",
+    "script": "dev",
+    "enabled": true,
+    "link": "https://localhost:3009/admin/",
+    "group": "UI"
+  }
+]
