@@ -8,7 +8,7 @@
     "build": "vite build && electron-builder",
     "preview": "vite preview",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "clean": "if exist release rmdir /s /q release",
+    "clean": "node -e \"require('fs').rmSync('release',{ recursive: true, force: true })\"",
     "electron:build": "npm run clean && vite build && electron-builder"
   },
   "keywords": [

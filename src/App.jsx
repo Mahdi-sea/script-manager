@@ -22,8 +22,8 @@ function App() {
     if (result.success) {
       setProjects((prev) =>
         prev.map((p) =>
-          p.name === projectName ? { ...p, enabled: result.enabled } : p
-        )
+          p.name === projectName ? { ...p, enabled: result.enabled } : p,
+        ),
       );
     }
   };
@@ -46,7 +46,7 @@ function App() {
   const handleRunDevBat = async () => {
     const result = await window.electron.runDevBat();
     if (!result.success) {
-      alert(`Failed to run dev bat: ${result.error}`);
+      alert(`Failed to run dev command: ${result.error}`);
     }
   };
 
@@ -63,7 +63,7 @@ function App() {
             Open in VS Code
           </button>
           <button className="run-dev-button" onClick={handleRunDevBat}>
-            Run Dev Bat
+            Run Dev
           </button>
         </div>
       </header>
@@ -103,7 +103,7 @@ function App() {
                           e.stopPropagation();
                           window.electron.openCmdPrompt(
                             project.cwd,
-                            project.script || "dev"
+                            project.script || "dev",
                           );
                         }}
                         title={`Open CMD in ${project.cwd} with npm run ${

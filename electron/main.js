@@ -4,6 +4,38 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 
 let mainWindow;
+const isWindows = process.platform === "win32";
+const isMac = process.platform === "darwin";
+
+function shellQuote(value) {
+  return `'${String(value).replace(/'/g, `'\\''`)}'`;
+}
+
+function escapeAppleScript(value) {
+  return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
+function openMacTerminal(command, cwd) {
+  const cdPart = cwd ? `cd ${shellQuote(cwd)}; ` : "";
+  const fullCommand = `${cdPart}${command}`;
+  const escapedCommand = escapeAppleScript(fullCommand);
+
+  const child = spawn(
+    "osascript",
+    [
+      "-e",
+      `tell application \"Terminal\" to do script \"${escapedCommand}\"`,
+      "-e",
+      'tell application "Terminal" to activate',
+    ],
+    {
+      detached: true,
+      stdio: "ignore",
+    }
+  );
+
+  child.unref();
+}
 
 // Get the projects.json path - use userData directory in production
 function getProjectsPath() {
@@ -94,14 +126,35 @@ ipcMain.handle("toggle-project", async (event, projectName) => {
 
 ipcMain.handle("run-dev-bat", async () => {
   try {
-    const batPath = path.join(__dirname, "..", "run-dev.bat");
+    const rootPath = path.join(__dirname, "..");
+    const devAllPath = path.join(rootPath, "dev-all.js");
+    const projectsPath = getProjectsPath();
 
-    const child = spawn("cmd.exe", ["/c", "start", "cmd.exe", "/k", batPath], {
-      detached: true,
-      stdio: "ignore",
-    });
-
-    child.unref();
+    if (isWindows) {
+      const command = `set \"ELECTRON_RUN_PROJECTS_PATH=${projectsPath}\" && node \"${devAllPath}\"`;
+      const child = spawn(
+        "cmd.exe",
+        ["/c", "start", "Dev Runner", "cmd.exe", "/k", command],
+        {
+          detached: true,
+          stdio: "ignore",
+        }
+      );
+      child.unref();
+    } else if (isMac) {
+      const command = `ELECTRON_RUN_PROJECTS_PATH=${shellQuote(
+        projectsPath
+      )} node ${shellQuote(devAllPath)}`;
+      openMacTerminal(command, rootPath);
+    } else {
+      const child = spawn("node", [devAllPath], {
+        cwd: rootPath,
+        env: { ...process.env, ELECTRON_RUN_PROJECTS_PATH: projectsPath },
+        detached: true,
+        stdio: "ignore",
+      });
+      child.unref();
+    }
 
     return { success: true };
   } catch (error) {
@@ -122,12 +175,16 @@ ipcMain.handle("open-vscode", async (event, projectPath) => {
   try {
     const absolutePath = path.resolve(__dirname, "..", projectPath);
 
-    // On Windows, use cmd.exe to run code command
-    const child = spawn("cmd.exe", ["/c", "code", absolutePath], {
-      detached: true,
-      stdio: "ignore",
-      shell: true,
-    });
+    const child = isWindows
+      ? spawn("cmd.exe", ["/c", "code", absolutePath], {
+        detached: true,
+        stdio: "ignore",
+        shell: true,
+      })
+      : spawn("code", [absolutePath], {
+        detached: true,
+        stdio: "ignore",
+      });
 
     child.unref();
     return { success: true };
@@ -141,25 +198,36 @@ ipcMain.handle("open-cmd-prompt", async (event, projectPath, script) => {
     const absolutePath = path.resolve(__dirname, "..", projectPath);
     const command = `npm run ${script}`;
 
-    // Open cmd.exe in the project directory with the command ready but not executed
-    const child = spawn(
-      "cmd.exe",
-      [
-        "/c",
-        "start",
-        "/d",
-        absolutePath,
+    if (isWindows) {
+      const child = spawn(
         "cmd.exe",
-        "/k",
-        `echo. && echo ============================================= && echo Ready to run: ${command} && echo ============================================= && echo. && echo Just press UP ARROW and ENTER to run && echo. && ${command} || echo.`,
-      ],
-      {
+        [
+          "/c",
+          "start",
+          "/d",
+          absolutePath,
+          "cmd.exe",
+          "/k",
+          `echo. && echo ============================================= && echo Ready to run: ${command} && echo ============================================= && echo. && echo Just press UP ARROW and ENTER to run && echo. && ${command} || echo.`,
+        ],
+        {
+          detached: true,
+          stdio: "ignore",
+        }
+      );
+      child.unref();
+    } else if (isMac) {
+      const macCommand = `echo; echo \"=============================================\"; echo \"Running: ${command}\"; echo \"=============================================\"; echo; ${command}`;
+      openMacTerminal(macCommand, absolutePath);
+    } else {
+      const child = spawn("x-terminal-emulator", ["-e", command], {
+        cwd: absolutePath,
         detached: true,
         stdio: "ignore",
-      }
-    );
+      });
+      child.unref();
+    }
 
-    child.unref();
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
